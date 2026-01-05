@@ -33,6 +33,7 @@ jobs:
 
       - name: Build iOS for Simulator
         run: |
+          # Dùng --no-pub để bảo vệ bản vá file .m
           flutter build ios --simulator --no-codesign --no-pub
 
       - name: Zip App
