@@ -17,19 +17,16 @@ jobs:
         run: |
           flutter pub get
           flutter clean
-          # Xóa sạch dấu vết cũ trên máy ảo
-          cd ios
-          rm -rf Pods Podfile.lock .symlinks Runner/GeneratedPluginRegistrant.*
-          cd ..
-          # Tạo lại cấu hình sạch
           flutter build ios --config-only --simulator --no-codesign
           cd ios
+          # Lệnh 'hack': Chuyển @import sang #import trong file Registrant
+          sed -i '' 's/@import cloud_firestore;/#import <cloud_firestore\/FLTFirebaseFirestorePlugin.h>/g' Runner/GeneratedPluginRegistrant.m || true
           pod install --repo-update
 
       - name: Build iOS for Simulator
         run: |
-          # Dùng lệnh verbose để xem chi tiết nếu vẫn lỗi
-          flutter build ios --simulator --no-codesign
+          # Chạy build với lệnh chi tiết hơn
+          flutter build ios --simulator --no-codesign --verbose
           
       - name: Zip App
         run: |
