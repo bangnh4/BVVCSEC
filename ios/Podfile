@@ -1,20 +1,31 @@
-# Đường dẫn này giúp CocoaPods tìm thấy các lệnh của Flutter trên máy ảo
-load File.join(File.dirname(File.realpath(__FILE__)), 'Flutter', 'generated_plugin_registrant.rb')
+# Xóa hoặc comment dòng này trong .gitignore
+Runner/GeneratedPluginRegistrant.* ```
+Việc này rất quan trọng để khi máy Mac ảo của GitHub tạo ra file này, nó có thể được lưu lại và sử dụng.
 
+### Bước 2: Dùng file `Podfile` tự động hoàn toàn
+Thay vì dùng `load` thủ công dễ bị lỗi đường dẫn, bạn hãy thay toàn bộ nội dung file `Podfile` bằng đoạn mã dưới đây. Nó sẽ tự động tìm kiếm cấu hình Flutter một cách thông minh hơn:
+
+```ruby
 platform :ios, '13.0'
 
-# Quan trọng: Dòng này giúp Podfile hiểu các lệnh Flutter
+# Tự động tìm đường dẫn đến Flutter
+if File.exist?(File.join(File.dirname(File.realpath(__FILE__)), 'Flutter', 'generated_plugin_registrant.rb'))
+  load File.join(File.dirname(File.realpath(__FILE__)), 'Flutter', 'generated_plugin_registrant.rb')
+end
+
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  # Nếu lệnh này vẫn lỗi, chúng ta sẽ dùng cách dự phòng ở dưới
-  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+  # Chỉ chạy lệnh này nếu nó tồn tại
+  if respond_to?(:flutter_install_all_ios_pods)
+    flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+  end
 end
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|
-    flutter_additional_ios_build_settings(target)
+    flutter_additional_ios_build_settings(target) if respond_to?(:flutter_additional_ios_build_settings)
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
     end
