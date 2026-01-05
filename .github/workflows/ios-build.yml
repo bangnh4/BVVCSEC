@@ -16,7 +16,9 @@ jobs:
       - name: Install Dependencies
         run: |
           flutter pub get
-          cd ios && pod install
+          cd ios
+          # Lệnh này giúp máy ảo tự cấu hình nếu Podfile vừa được thêm vào
+          pod repo update
 
       - name: Build iOS for Simulator
         run: |
