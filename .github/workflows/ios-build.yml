@@ -19,11 +19,17 @@ jobs:
         run: |
           flutter pub get
           flutter clean
-          # Tạo config trước
           flutter build ios --config-only --simulator --no-codesign
           
           cd ios
-          # Vá file dùng dấu ngoặc kép để Xcode tự tìm trong Search Paths đã cấu hình ở Podfile
+          # 1. Tìm và copy Header vật lý vào thẳng thư mục Runner
+          # Điều này đảm bảo Xcode luôn thấy file ngay tại chỗ
+          find Pods -name "FLTFirebaseFirestorePlugin.h" -exec cp {} Runner/ \;
+          find Pods -name "FLTFirebaseCorePlugin.h" -exec cp {} Runner/ \;
+          find Pods -name "FLTFirebaseAuthPlugin.h" -exec cp {} Runner/ \;
+          find Pods -name "FLTFirebaseDatabasePlugin.h" -exec cp {} Runner/ \;
+
+          # 2. Vá file Registrant dùng Header cục bộ (dấu ngoặc kép)
           sed -i '' 's/@import cloud_firestore;/#import "FLTFirebaseFirestorePlugin.h"/g' Runner/GeneratedPluginRegistrant.m || true
           sed -i '' 's/@import firebase_core;/#import "FLTFirebaseCorePlugin.h"/g' Runner/GeneratedPluginRegistrant.m || true
           sed -i '' 's/@import firebase_auth;/#import "FLTFirebaseAuthPlugin.h"/g' Runner/GeneratedPluginRegistrant.m || true
@@ -33,7 +39,7 @@ jobs:
 
       - name: Build iOS for Simulator
         run: |
-          # Dùng --no-pub để bảo vệ bản vá file .m
+          # BẮT BUỘC dùng --no-pub
           flutter build ios --simulator --no-codesign --no-pub
 
       - name: Zip App
