@@ -14,15 +14,18 @@ jobs:
           flutter-version: '3.27.0'
           channel: 'stable'
           cache: true
-          
+
       - name: Build Preparation
         run: |
           flutter pub get
           flutter clean
           flutter build ios --config-only --simulator --no-codesign
           cd ios
-          # Lệnh 'hack': Chuyển @import sang #import trong file Registrant
+          # Lệnh 'hack' tổng lực cho tất cả Firebase Plugins
           sed -i '' 's/@import cloud_firestore;/#import <cloud_firestore\/FLTFirebaseFirestorePlugin.h>/g' Runner/GeneratedPluginRegistrant.m || true
+          sed -i '' 's/@import firebase_core;/#import <firebase_core\/FLTFirebaseCorePlugin.h>/g' Runner/GeneratedPluginRegistrant.m || true
+          sed -i '' 's/@import firebase_auth;/#import <firebase_auth\/FLTFirebaseAuthPlugin.h>/g' Runner/GeneratedPluginRegistrant.m || true
+          sed -i '' 's/@import firebase_database;/#import <firebase_database\/FLTFirebaseDatabasePlugin.h>/g' Runner/GeneratedPluginRegistrant.m || true
           pod install --repo-update
 
       - name: Build iOS for Simulator
