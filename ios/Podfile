@@ -1,9 +1,14 @@
+# Đường dẫn này giúp CocoaPods tìm thấy các lệnh của Flutter trên máy ảo
+load File.join(File.dirname(File.realpath(__FILE__)), 'Flutter', 'generated_plugin_registrant.rb')
+
 platform :ios, '13.0'
 
+# Quan trọng: Dòng này giúp Podfile hiểu các lệnh Flutter
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
+  # Nếu lệnh này vẫn lỗi, chúng ta sẽ dùng cách dự phòng ở dưới
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 

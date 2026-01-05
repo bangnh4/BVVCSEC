@@ -16,9 +16,10 @@ jobs:
       - name: Install Dependencies
         run: |
           flutter pub get
+          # Thêm lệnh này để Flutter tự tạo lại các file liên kết còn thiếu
+          flutter precache --ios
           cd ios
-          # Lệnh này giúp máy ảo tự cấu hình nếu Podfile vừa được thêm vào
-          pod repo update
+          pod install --repo-update
 
       - name: Build iOS for Simulator
         run: |
