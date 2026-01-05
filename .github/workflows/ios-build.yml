@@ -19,25 +19,28 @@ jobs:
         run: |
           flutter pub get
           flutter clean
-          # Chỉ tạo cấu hình, không build để tránh khởi tạo lại file Registrant quá sớm
+          # Tạo file cấu hình và Pods trước
           flutter build ios --config-only --simulator --no-codesign
-          
-      - name: Fix Firebase Header Modules
+          cd ios
+          pod install --repo-update
+
+      - name: Critical Fix for Firebase Static Linkage
         run: |
           cd ios
-          # Chuyển đổi TẤT CẢ các plugin từ @import sang #import truyền thống
-          # Đây là chìa khóa để build thành công với :linkage => :static
+          # Tìm và thay thế @import bằng #import truyền thống trong GeneratedPluginRegistrant
+          # Cách này giúp Xcode tìm thấy Header vật lý thay vì tìm Module ảo
           find . -name "GeneratedPluginRegistrant.m" -exec sed -i '' 's/@import cloud_firestore;/#import <cloud_firestore\/FLTFirebaseFirestorePlugin.h>/g' {} +
-          find . -name "GeneratedPluginRegistrant.m" -exec sed -i '' 's/@import firebase_core;/#import <firebase_core\/FLTFirebaseCorePlugin.h>/g' {} +
           find . -name "GeneratedPluginRegistrant.m" -exec sed -i '' 's/@import firebase_auth;/#import <firebase_auth\/FLTFirebaseAuthPlugin.h>/g' {} +
+          find . -name "GeneratedPluginRegistrant.m" -exec sed -i '' 's/@import firebase_core;/#import <firebase_core\/FLTFirebaseCorePlugin.h>/g' {} +
           find . -name "GeneratedPluginRegistrant.m" -exec sed -i '' 's/@import firebase_database;/#import <firebase_database\/FLTFirebaseDatabasePlugin.h>/g' {} +
           
-          pod install --repo-update
+          # Fix lỗi kén phiên bản iOS trong Pods
+          sed -i '' 's/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*/IPHONEOS_DEPLOYMENT_TARGET = 13.0/g' Pods/Pods.xcodeproj/project.pbxproj || true
 
       - name: Build iOS for Simulator
         run: |
-          # Build trực tiếp bằng xcodebuild để kiểm soát lỗi tốt hơn
-          flutter build ios --simulator --no-codesign --verbose
+          # Build trực tiếp bằng flutter command
+          flutter build ios --simulator --no-codesign
 
       - name: Zip App
         run: |
