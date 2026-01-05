@@ -17,17 +17,18 @@ jobs:
         run: |
           flutter pub get
           flutter clean
-          # Xóa sạch các file iOS cũ để Flutter tự sinh lại từ đầu trên Mac
+          # Xóa sạch dấu vết cũ trên máy ảo
           cd ios
           rm -rf Pods Podfile.lock .symlinks Runner/GeneratedPluginRegistrant.*
           cd ..
+          # Tạo lại cấu hình sạch
           flutter build ios --config-only --simulator --no-codesign
           cd ios
           pod install --repo-update
 
       - name: Build iOS for Simulator
         run: |
-          # Build thực tế sau khi đã có đầy đủ cấu hình Pods
+          # Dùng lệnh verbose để xem chi tiết nếu vẫn lỗi
           flutter build ios --simulator --no-codesign
           
       - name: Zip App
