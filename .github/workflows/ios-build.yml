@@ -16,11 +16,13 @@ jobs:
       - name: Build Preparation
         run: |
           flutter pub get
-          # Xóa cache cũ để tránh xung đột module
           flutter clean
+          # Xóa sạch các file iOS cũ để Flutter tự sinh lại từ đầu trên Mac
+          cd ios
+          rm -rf Pods Podfile.lock .symlinks Runner/GeneratedPluginRegistrant.*
+          cd ..
           flutter build ios --config-only --simulator --no-codesign
           cd ios
-          # Ép buộc cập nhật repo và cài đặt lại Pods
           pod install --repo-update
 
       - name: Build iOS for Simulator
