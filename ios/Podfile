@@ -1,14 +1,6 @@
-# Xóa hoặc comment dòng này trong .gitignore
-Runner/GeneratedPluginRegistrant.* ```
-Việc này rất quan trọng để khi máy Mac ảo của GitHub tạo ra file này, nó có thể được lưu lại và sử dụng.
-
-### Bước 2: Dùng file `Podfile` tự động hoàn toàn
-Thay vì dùng `load` thủ công dễ bị lỗi đường dẫn, bạn hãy thay toàn bộ nội dung file `Podfile` bằng đoạn mã dưới đây. Nó sẽ tự động tìm kiếm cấu hình Flutter một cách thông minh hơn:
-
-```ruby
 platform :ios, '13.0'
 
-# Tự động tìm đường dẫn đến Flutter
+# Tu dong tim duong dan den Flutter
 if File.exist?(File.join(File.dirname(File.realpath(__FILE__)), 'Flutter', 'generated_plugin_registrant.rb'))
   load File.join(File.dirname(File.realpath(__FILE__)), 'Flutter', 'generated_plugin_registrant.rb')
 end
@@ -17,7 +9,6 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  # Chỉ chạy lệnh này nếu nó tồn tại
   if respond_to?(:flutter_install_all_ios_pods)
     flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   end
