@@ -19,15 +19,47 @@ jobs:
         run: |
           flutter pub get
           flutter clean
-          # Xóa sạch cache Pods cũ trên máy ảo
+          flutter build ios --config-only --simulator --no-codesign
+          
           cd ios
-          rm -rf Pods Podfile.lock Runner/GeneratedPluginRegistrant.* pod install --repo-update
-          cd ..
+          # Tạo nội dung file Registrant mới dùng #import (Header) thay vì @import (Module)
+          cat <<EOF > Runner/GeneratedPluginRegistrant.m
+          #import "GeneratedPluginRegistrant.h"
+          #import <cloud_firestore/FLTFirebaseFirestorePlugin.h>
+          #import <firebase_auth/FLTFirebaseAuthPlugin.h>
+          #import <firebase_core/FLTFirebaseCorePlugin.h>
+          #import <firebase_database/FLTFirebaseDatabasePlugin.h>
+          #import <flutter_email_sender/FlutterEmailSenderPlugin.h>
+          #import <geolocator_apple/GeolocatorPlugin.h>
+          #import <mobile_scanner/MobileScannerPlugin.h>
+          #import <path_provider_foundation/PathProviderPlugin.h>
+          #import <shared_preferences_foundation/FLTSharedPreferencesPlugin.h>
+          #import <url_launcher_ios/FLTUrlLauncherPlugin.h>
+
+          @implementation GeneratedPluginRegistrant
+
+          + (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
+            [FLTFirebaseFirestorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseFirestorePlugin"]];
+            [FLTFirebaseAuthPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseAuthPlugin"]];
+            [FLTFirebaseCorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCorePlugin"]];
+            [FLTFirebaseDatabasePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseDatabasePlugin"]];
+            [FlutterEmailSenderPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterEmailSenderPlugin"]];
+            [GeolocatorPlugin registerWithRegistrar:[registry registrarForPlugin:@"GeolocatorPlugin"]];
+            [MobileScannerPlugin registerWithRegistrar:[registry registrarForPlugin:@"MobileScannerPlugin"]];
+            [PathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"PathProviderPlugin"]];
+            [FLTSharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTSharedPreferencesPlugin"]];
+            [FLTUrlLauncherPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTUrlLauncherPlugin"]];
+          }
+
+          @end
+          EOF
+          
+          pod install --repo-update
 
       - name: Build iOS for Simulator
         run: |
-          # Build bình thường, không dùng --no-pub để Flutter tự tạo lại file Registrant chuẩn
-          flutter build ios --simulator --no-codesign
+          # BẮT BUỘC dùng --no-pub để Flutter không ghi đè lại file chúng ta vừa tạo
+          flutter build ios --simulator --no-codesign --no-pub
 
       - name: Zip App
         run: |
