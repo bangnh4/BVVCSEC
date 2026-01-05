@@ -1,10 +1,10 @@
 name: Flutter iOS Build
 on:
-  workflow_dispatch: # Cho phép bạn bấm nút chạy thủ công trên web
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: macos-latest # Mượn máy Mac của GitHub
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -12,10 +12,12 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          flutter-version: '3.19.0' # Hoặc phiên bản bạn đang dùng
+          # Đã bỏ dòng flutter-version để tự lấy bản mới nhất
 
       - name: Install Dependencies
-        run: flutter pub get
+        run: |
+          flutter pub get
+          cd ios && pod install
 
       - name: Build iOS for Simulator
         run: |
@@ -26,7 +28,7 @@ jobs:
           cd build/ios/iphonesimulator
           zip -r BVVCSEC_ios.zip Runner.app
 
-      - name: Upload to GitHub
+      - name: Upload Result
         uses: actions/upload-artifact@v4
         with:
           name: ios-app-file
