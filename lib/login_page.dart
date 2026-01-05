@@ -108,8 +108,8 @@ class _LoginPageState extends State<LoginPage> {
                       child: Image.asset('assets/logo1.png', height: 90),
                     ),
                     const SizedBox(height: 15),
-                    Text('VINCOM SECURITY SYSTEM', 
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: const Color(0xFF1a2a6c), letterSpacing: 1.2)
+                    const Text('VINCOM SECURITY SYSTEM', 
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1a2a6c), letterSpacing: 1.2)
                     ),
                     const Text('Security & Patrol Management', style: TextStyle(fontSize: 10, color: Colors.grey)),
                     const SizedBox(height: 30),

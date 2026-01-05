@@ -5,8 +5,7 @@ if File.exist?(File.join(File.dirname(File.realpath(__FILE__)), 'Flutter', 'gene
 end
 
 target 'Runner' do
-  use_frameworks! # Chỉ dùng thế này là đủ
-  use_modular_headers!
+  use_frameworks! 
 
   if respond_to?(:flutter_install_all_ios_pods)
     flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
@@ -18,8 +17,6 @@ post_install do |installer|
     flutter_additional_ios_build_settings(target) if respond_to?(:flutter_additional_ios_build_settings)
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
-      # Cho phép Xcode linh hoạt hơn trong việc tìm kiếm thư viện
-      config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
     end
   end
 end
