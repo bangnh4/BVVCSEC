@@ -11,7 +11,7 @@ jobs:
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable' # Tự động lấy bản mới nhất để không bị lỗi version
+          channel: 'stable' # Tự động lấy bản Flutter mới nhất hiện tại
 
       - name: Install Dependencies
         run: |
@@ -25,11 +25,11 @@ jobs:
       - name: Zip App
         run: |
           cd build/ios/iphonesimulator
-          # Lệnh này sẽ nén app với tên bạn muốn
-          zip -r BVVCSEC_Final.app.zip Runner.app
+          # Đổi tên file zip xuất ra thành BVVCSEC
+          zip -r BVVCSEC_Final.zip Runner.app
 
       - name: Upload Result
         uses: actions/upload-artifact@v4
         with:
           name: ios-app-file
-          path: build/ios/iphonesimulator/BVVCSEC_Final.app.zip
+          path: build/ios/iphonesimulator/BVVCSEC_Final.zip
