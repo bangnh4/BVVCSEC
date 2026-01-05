@@ -16,9 +16,11 @@ jobs:
       - name: Build Preparation
         run: |
           flutter pub get
-          # Quan trọng: Tạo file cấu hình và liên kết module TRƯỚC khi build
+          # Xóa cache cũ để tránh xung đột module
+          flutter clean
           flutter build ios --config-only --simulator --no-codesign
           cd ios
+          # Ép buộc cập nhật repo và cài đặt lại Pods
           pod install --repo-update
 
       - name: Build iOS for Simulator
