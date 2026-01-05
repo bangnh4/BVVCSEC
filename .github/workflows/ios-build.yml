@@ -11,24 +11,24 @@ jobs:
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable' # Tự động lấy bản Flutter mới nhất hiện tại
+          channel: 'stable'
 
-      - name: Install Dependencies
+      - name: Build Preparation
         run: |
           flutter pub get
-          # Thêm lệnh này để Flutter tự tạo lại các file liên kết còn thiếu
-          flutter precache --ios
+          # Quan trọng: Tạo file cấu hình và liên kết module TRƯỚC khi build
+          flutter build ios --config-only --simulator --no-codesign
           cd ios
           pod install --repo-update
 
       - name: Build iOS for Simulator
         run: |
+          # Build thực tế sau khi đã có đầy đủ cấu hình Pods
           flutter build ios --simulator --no-codesign
           
       - name: Zip App
         run: |
           cd build/ios/iphonesimulator
-          # Đổi tên file zip xuất ra thành BVVCSEC
           zip -r BVVCSEC_Final.zip Runner.app
 
       - name: Upload Result
