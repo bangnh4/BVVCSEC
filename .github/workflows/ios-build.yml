@@ -19,16 +19,21 @@ jobs:
         run: |
           flutter pub get
           flutter clean
-          # Tạo config trước để có thư mục ios/Flutter
+          # 1. Tạo cấu hình cơ sở
           flutter build ios --config-only --simulator --no-codesign
+          
+          # 2. Bước quan trọng: Chuyển đổi @import sang #import truyền thống
+          # Lệnh này sửa trực tiếp lỗi tại dòng 11 mà bạn đang gặp phải
           cd ios
-          # Xóa cache cũ nếu có để tránh xung đột module
-          rm -rf Pods Podfile.lock
+          sed -i '' 's/@import cloud_firestore;/#import <cloud_firestore\/FLTFirebaseFirestorePlugin.h>/g' Runner/GeneratedPluginRegistrant.m || true
+          sed -i '' 's/@import firebase_core;/#import <firebase_core\/FLTFirebaseCorePlugin.h>/g' Runner/GeneratedPluginRegistrant.m || true
+          
+          # 3. Cài đặt Pods sau khi đã "vá" file Registrant
           pod install --repo-update
 
       - name: Build iOS for Simulator
         run: |
-          # Dùng --no-pub để giữ nguyên các file cấu hình đã được pod install xử lý
+          # Dùng --no-pub để Flutter không tự động tạo lại file Registrant (làm mất bản vá)
           flutter build ios --simulator --no-codesign --no-pub
 
       - name: Zip App
