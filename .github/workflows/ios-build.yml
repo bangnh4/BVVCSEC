@@ -21,11 +21,11 @@ jobs:
           flutter build ios --config-only --simulator --no-codesign
           
           cd ios
-          # VÁ FILE: Đưa về dạng Header phẳng để kết hợp với SEARCH_PATHS trong Podfile
-          sed -i '' 's/@import cloud_firestore;/#import "FLTFirebaseFirestorePlugin.h"/g' Runner/GeneratedPluginRegistrant.m || true
-          sed -i '' 's/@import firebase_core;/#import "FLTFirebaseCorePlugin.h"/g' Runner/GeneratedPluginRegistrant.m || true
-          sed -i '' 's/@import firebase_auth;/#import "FLTFirebaseAuthPlugin.h"/g' Runner/GeneratedPluginRegistrant.m || true
-          sed -i '' 's/@import firebase_database;/#import "FLTFirebaseDatabasePlugin.h"/g' Runner/GeneratedPluginRegistrant.m || true
+          # VÁ FILE: Dùng định dạng Header chuẩn cho static framework
+          sed -i '' 's/@import cloud_firestore;/#import <cloud_firestore\/FLTFirebaseFirestorePlugin.h>/g' Runner/GeneratedPluginRegistrant.m || true
+          sed -i '' 's/@import firebase_core;/#import <firebase_core\/FLTFirebaseCorePlugin.h>/g' Runner/GeneratedPluginRegistrant.m || true
+          sed -i '' 's/@import firebase_auth;/#import <firebase_auth\/FLTFirebaseAuthPlugin.h>/g' Runner/GeneratedPluginRegistrant.m || true
+          sed -i '' 's/@import firebase_database;/#import <firebase_database\/FLTFirebaseDatabasePlugin.h>/g' Runner/GeneratedPluginRegistrant.m || true
           
           pod install --repo-update
 
