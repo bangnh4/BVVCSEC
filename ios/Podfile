@@ -4,9 +4,12 @@ if File.exist?(File.join(File.dirname(File.realpath(__FILE__)), 'Flutter', 'gene
   load File.join(File.dirname(File.realpath(__FILE__)), 'Flutter', 'generated_plugin_registrant.rb')
 end
 
+# Tắt modular headers toàn cục để ép về cấu trúc cũ dễ tìm file .h hơn
 use_modular_headers!
 
 target 'Runner' do
+  # SỬ DỤNG LINKAGE TĨNH NHƯNG KHÔNG DÙNG FRAMEWORKS NẾU CÓ THỂ
+  # Nếu bắt buộc dùng frameworks, hãy giữ dòng dưới:
   use_frameworks! :linkage => :static
 
   if respond_to?(:flutter_install_all_ios_pods)
@@ -20,14 +23,10 @@ post_install do |installer|
     
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
-        
-      config.build_settings['HEADER_SEARCH_PATHS'] = [
-        '$(inherited)',
-        '${PODS_ROOT}/Headers/Public/**',
-        '${PODS_CONFIGURATION_BUILD_DIR}/**',
-        '${PODS_XCFRAMEWORKS_BUILD_DIR}/**'
-      ]
       
+      # Giải pháp ép tìm kiếm ở mức độ hệ thống
+      config.build_settings['HEADER_SEARCH_PATHS'] = '$(inherited) ${PODS_ROOT}/Headers/Public/**'
+      config.build_settings['USER_HEADER_SEARCH_PATHS'] = '$(inherited) ${PODS_ROOT}/Headers/Public/**'
       config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
       config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
     end
