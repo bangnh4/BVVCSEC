@@ -18,10 +18,8 @@ post_install do |installer|
     flutter_additional_ios_build_settings(target) if respond_to?(:flutter_additional_ios_build_settings)
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
-      
-      # FIX CUỐI CÙNG: Ép Runner nhìn thấy mọi Header của Pods
-      config.build_settings['USER_HEADER_SEARCH_PATHS'] = '"$(SRCROOT)/Pods/Headers/Public/**"'
-      config.build_settings['ALWAYS_SEARCH_USER_PATHS'] = 'YES'
+      # BƯỚC QUYẾT ĐỊNH: Cho phép tìm Header ở bất cứ đâu trong Pods
+      config.build_settings['HEADER_SEARCH_PATHS'] = '$(inherited) ${PODS_ROOT}/Headers/Public/**'
       config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
     end
   end

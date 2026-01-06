@@ -195,8 +195,8 @@ class _ReportPageState extends State<ReportPage> {
                   ),
                   child: isExporting 
                     ? const CircularProgressIndicator(color: Colors.white) 
-                    : Text(kIsWeb ? "TẢI FILE BÁO CÁO" : "GỬI BÁO CÁO QUA EMAIL", 
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+                    : const Text(kIsWeb ? "TẢI FILE BÁO CÁO" : "GỬI BÁO CÁO QUA EMAIL", 
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
                 ),
               ),
               const SizedBox(height: 30), // Padding đáy
