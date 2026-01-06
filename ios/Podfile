@@ -19,18 +19,21 @@ post_install do |installer|
     flutter_additional_ios_build_settings(target) if respond_to?(:flutter_additional_ios_build_settings)
     
     target.build_configurations.each do |config|
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0' [cite: 1, 4]
       
-      # FIX LỖI SYNTAX: Sử dụng mảng đúng chuẩn Ruby
+      # Giải pháp ép Xcode quét mọi ngóc ngách để tìm .h
       config.build_settings['HEADER_SEARCH_PATHS'] = [
         '$(inherited)',
-        '${PODS_ROOT}/Headers/Public/**',
-        '${PODS_CONFIGURATION_BUILD_DIR}/cloud_firestore/cloud_firestore.framework/Headers'
+        '${PODS_ROOT}/Headers/Public/Firebase',
+        '${PODS_ROOT}/Headers/Public/cloud_firestore',
+        '${PODS_ROOT}/Headers/Public/firebase_core',
+        '${PODS_ROOT}/Headers/Public/firebase_auth',
+        '${PODS_ROOT}/Headers/Public/firebase_database'
       ]
       
-      config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
+      config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES' [cite: 1, 4]
       config.build_settings['USER_HEADER_SEARCH_PATHS'] = '${PODS_ROOT}/Headers/Public/**'
-      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
+      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64' [cite: 1, 4]
     end
   end
 end
