@@ -19,15 +19,21 @@ jobs:
         run: |
           flutter clean
           flutter pub get
+          flutter build ios --config-only --simulator --no-codesign
+          
           cd ios
-          rm -rf Pods
-          rm -rf Podfile.lock
+          # TRẢ VỀ NGUYÊN BẢN: Nếu bạn lỡ vá file trước đó, hãy xóa sạch các dòng vá cũ
+          # Để file GeneratedPluginRegistrant.m ở dạng mặc định của Flutter
+          # Nếu vẫn bị lỗi 'Module not found', hãy thử dòng dưới đây:
+          sed -i '' 's/@import cloud_firestore;/#import <cloud_firestore\/FLTFirebaseFirestorePlugin.h>/g' Runner/GeneratedPluginRegistrant.m || true
+          
+          rm -rf Pods Podfile.lock
           pod install --repo-update
 
       - name: Build iOS for Simulator
         run: |
           flutter build ios --simulator --no-codesign
-          
+
       - name: Zip App
         run: |
           cd build/ios/iphonesimulator
