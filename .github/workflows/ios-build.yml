@@ -20,13 +20,37 @@ jobs:
           flutter pub get
           flutter build ios --config-only --simulator --no-codesign
           
-          cd ios
-          # VÁ FILE: Dùng định dạng <Module/Header.h> - Đây là cách Xcode nhận diện tốt nhất cho Frameworks
-          sed -i '' 's/@import cloud_firestore;/#import <cloud_firestore\/FLTFirebaseFirestorePlugin.h>/g' Runner/GeneratedPluginRegistrant.m || true
-          sed -i '' 's/@import firebase_core;/#import <firebase_core\/FLTFirebaseCorePlugin.h>/g' Runner/GeneratedPluginRegistrant.m || true
-          sed -i '' 's/@import firebase_auth;/#import <firebase_auth\/FLTFirebaseAuthPlugin.h>/g' Runner/GeneratedPluginRegistrant.m || true
-          sed -i '' 's/@import firebase_database;/#import <firebase_database\/FLTFirebaseDatabasePlugin.h>/g' Runner/GeneratedPluginRegistrant.m || true
+          # TẠO LẠI FILE REGISTRANT TỪ ĐẦU (Nuclear Option)
+          cat <<EOF > ios/Runner/GeneratedPluginRegistrant.m
+          #import "GeneratedPluginRegistrant.h"
+
+          // Import trực tiếp từ đường dẫn Framework
+          #import <cloud_firestore/FLTFirebaseFirestorePlugin.h>
+          #import <firebase_auth/FLTFirebaseAuthPlugin.h>
+          #import <firebase_core/FLTFirebaseCorePlugin.h>
+          #import <firebase_database/FLTFirebaseDatabasePlugin.h>
+          #import <geolocator_apple/GeolocatorPlugin.h>
+          #import <mobile_scanner/MobileScannerPlugin.h>
+          #import <shared_preferences_foundation/FLTSharedPreferencesPlugin.h>
+          #import <url_launcher_ios/FLTUrlLauncherPlugin.h>
+
+          @implementation GeneratedPluginRegistrant
+
+          + (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
+            [FLTFirebaseFirestorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseFirestorePlugin"]];
+            [FLTFirebaseAuthPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseAuthPlugin"]];
+            [FLTFirebaseCorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCorePlugin"]];
+            [FLTFirebaseDatabasePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseDatabasePlugin"]];
+            [GeolocatorPlugin registerWithRegistrar:[registry registrarForPlugin:@"GeolocatorPlugin"]];
+            [MobileScannerPlugin registerWithRegistrar:[registry registrarForPlugin:@"MobileScannerPlugin"]];
+            [FLTSharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTSharedPreferencesPlugin"]];
+            [FLTUrlLauncherPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTUrlLauncherPlugin"]];
+          }
+
+          @end
+          EOF
           
+          cd ios
           pod install --repo-update
 
       - name: Build iOS for Simulator
